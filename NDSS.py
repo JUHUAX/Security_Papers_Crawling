@@ -4,7 +4,8 @@ import os
 import time
 from bs4 import BeautifulSoup
 import bs4
-
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 base_url = "https://www.ndss-symposium.org/"
 
@@ -29,7 +30,7 @@ def get_papers(year):
         soup = BeautifulSoup(html, "html.parser")
         title = soup.find_all(attrs={"class" :"entry-title"})[0].text.lower()
         titles.append(title)
-        abstract = soup.find_all(attrs={"class" :"paper-data"})[0].contents[3].text.lower()
+        abstract = soup.find_all(attrs={"class" :"paper-data"})[0].contents[3].text.lower().strip()
         abstracts.append(abstract)
         pdf = soup.find_all(attrs={"class" :"btn btn-light btn-sm pdf-button"})[0]['href']
         pdfs.append(pdf)
@@ -44,5 +45,3 @@ def match_key_words(papers, key):
         if key in paper:
             result.append(paper)
     return result
-
-print(match_key_words(get_papers(2022)[0], "fuzz"))

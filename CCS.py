@@ -8,7 +8,8 @@ import os
 import time
 from bs4 import BeautifulSoup
 import bs4
-
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 #该函数获取历年会议的url，格式如下
 # {'history': 'https://www.sigsac.org/ccs/ccs-history.html', ' 2023': 'http://www.sigsac.org/ccs/CCS2023', 
 #  ' 2022': 'http://www.sigsac.org/ccs/CCS2022', ' 2021': 'http://www.sigsac.org/ccs/CCS2021', 
@@ -79,27 +80,31 @@ def match_key_words(papers, key):
     return result
 
 #获取title的摘要
+#ACM的数据库会锁IP
 def get_abstract(title):
-    params = {"AllField":title}
+    print(title)
+    params = {"fillQuickSearch":"false","target":"advanced","expand":"dl","field1":"AllField","text1":title}
     response = requests.get('https://dl.acm.org/action/doSearch', params=params,verify=False)
     html = response.text
+    print(html)
     soup = BeautifulSoup(html, "html.parser")
     paper_url = "https://dl.acm.org" + soup.find(name="span", attrs={"class" :"hlFld-Title"}).contents[0]['href']
     response = requests.get(paper_url,verify=False)
     html = response.text
     soup = BeautifulSoup(html, "html.parser")
-    paper_title = soup.find(attrs={"class" :"citation__title"})
     abstracts = soup.find(attrs={"class" :"article__section article__abstract hlFld-Abstract"}).contents[1]
     abstract = ""
     for i in abstracts:
         if type(i) == bs4.element.Tag:
             if i.name == 'p':
                 abstract = abstract + i.text + "\n"
-    return {paper_title: abstract}
+    return {title: abstract}
 
+#获取titles的摘要
+def get_abstracts(titles):
+    ans = {}
+    for title in titles:
+        tmp = get_abstract(title)
+        ans.update(tmp)
+    return ans
 
-
-if __name__ == "__main__":
-    print(get_abstract("Snipuzz: Black-box Fuzzing of IoT Firmware via Message Snippet Inference".lower()))
-    
-    

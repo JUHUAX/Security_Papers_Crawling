@@ -9,34 +9,25 @@ To our best knowledge, among existing crawlers in github, none has realized craw
 
 我没找到现有可以实现根据关键词爬取论文的爬虫，就很烦，就自己实现一个。
 
-## Method
-We use new bing to help us code.
-
-我用new bing辅助写的爬虫
-
 ## Implement
-python *_Crawling.py [-C --conference] [-Y --year] [-F --save_folder] [-K --keywords]
+python3 spider.py [-c --conference] [-y --year] [-K --keywords]
 
-example: **python CCS_Crawling.py -C ccs -Y 2022 -F paper/ -K adversarial**
+example: **python spider.py -c CCS -y 2022 -k fuzz**
 
 necessary arguments:
 
-**-C, --conference**:      which conference you want to crawl
+**-c, --conference**:      which conference you want to crawl（CCS\USENIX\NDSS\SP）
 
-**-Y, --year**:            which year you want to crawl
+**-y, --year**:            which year you want to crawl
 
 optional arguments:
 
-**-F, --save_floder**:     where papers downloaded, default: paper/
+**-k, --keyword**:        keywords you want papers include, default: None
 
-**-K, --keywords**:        keywords you want papers include, default: None
 
-## Limitation
-- Sensitive to Conference (This crawler may not work for another conferences)
-- Keywords only support the list of single word, like [membership, adversarial] (will support like [membership inference, adversarial attack] in the future)
-
-## Version
-- 0.3 (2023.3.28) For All S&P, and papers downloaed are renamed to their titles.
-- 0.2 (2023.3.15) For All CCS
-- 0.1 (2023.3.15) For CCS2022 only
-# Security_Papers_Crawling
+# 编写时间流
+- 2023.9.23 
+    - 还是放弃做成一个小的命令行工具。之前是想做成一个web app的，但是因为觉得涉及到文件的存储等一系列的优化，觉得有点麻烦。
+    - 实际上，在开发中试用发现不是自己想象的样子，每次调用函数都要去对论文网站爬虫，导致速度会很慢，所以，缓存变得很重要。暂时先存入文件。
+    - SP的爬取还需要完善，摘要和pdf下载链接都可以有
+    - CCS的爬取还有问题，不得不说CCS的网站写的很恶心

@@ -4,7 +4,8 @@ import os
 import time
 from bs4 import BeautifulSoup
 import bs4
-
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 base_url = "https://www.ndss-symposium.org/"
 
@@ -36,5 +37,3 @@ def match_key_words(papers, key):
         if key in paper:
             result.append(paper)
     return result
-
-print(match_key_words(get_papers(2023), 'fuzz'))

@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def get_papers_by_url(url):
     response = requests.get(url, verify=False)
