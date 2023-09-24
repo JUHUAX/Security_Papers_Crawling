@@ -16,7 +16,7 @@ def get_papers_by_url(url):
     abstracts = soup.find_all(attrs={"class" :"content"})
     for title in titles[1:]:
         papers.append(title.contents[1].text.lower())
-        papers_urls.append("https://www.usenix.org/" + title.contents[1]['href'])
+        papers_urls.append("https://www.usenix.org" + title.contents[1]['href'])
     
     for i in range(4,len(abstracts)-1):
         p_lables = abstracts[i].contents[1].contents[2].contents[0].contents

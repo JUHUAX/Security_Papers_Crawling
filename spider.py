@@ -48,11 +48,16 @@ def update_CCS(year):
 
 def get_CCS(year, keyword):
     update_CCS(year)
-    path = "./contents/CCS-" + year + "-papers&abstracts.txt"
-    results = load_papers(path)
-    papers = list(results)
+    path0 = "./contents/CCS-" + year + "-papers.txt"
+    path1 = "./contents/CCS-" + year + "-papers&abstracts.txt"
+    with open(path0, "r") as f:
+        papers = f.read()
+        papers = json.loads(papers)
+    results = load_papers(path1)
+    print(year + "年共收录论文：" + str(len(papers)) + "篇")
     if keyword != None:
         papers = match_key_words(papers, keyword)
+        print("关键字命中" + str(len(papers)) + "篇")
     for paper in papers:
         print("论文题目：" + paper)
         print("")
@@ -82,10 +87,12 @@ def get_NDSS(year, keyword):
     with open(path0, "r") as f:
         papers = f.read()
         papers = json.loads(papers)
+    print(year + "年共收录论文：" + str(len(papers)) + "篇")
     abstracts = load_papers(path1)
     pdfs = load_papers(path2)
     if keyword != None:
         papers = match_key_words(papers, keyword)
+        print("关键字命中" + str(len(papers)) + "篇")
     for paper in papers:
         print("论文题目：" + paper)
         print("")
@@ -118,10 +125,12 @@ def get_USENIX(year, keyword):
     with open(path0, "r") as f:
         papers = f.read()
         papers = json.loads(papers)
+    print(year + "年共收录论文：" + str(len(papers)) + "篇")
     abstracts = load_papers(path1)
     urls = load_papers(path2)
     if keyword != None:
         papers = match_key_words(papers, keyword)
+        print("关键字命中" + str(len(papers)) + "篇")
     for paper in papers:
         print("论文题目：" + paper)
         print("")
@@ -132,45 +141,66 @@ def get_USENIX(year, keyword):
 
 # SP
 def update_SP(year):
-    path = "./contents/SP-" + year + "-papers.txt"
+    path0 = "./contents/SP-" + year + "-papers.txt"
+    path1 = "./contents/SP-" + year + "-papers&abstract.txt"
     #更新papers&abstract文件操作
-    if update_papers(path):
+    if update_papers(path0):
         contents = SP_get_papers(year)
-        with open(path, "w") as f:
-            json.dump(contents, f)
+        with open(path0, "w") as f:
+            json.dump(contents[0], f)
+        with open(path1, "w") as f:
+            json.dump(contents[1], f)
 
 def get_SP(year, keyword):
     update_SP(year)
-    path = "./contents/SP-" + year + "-papers.txt"
-    with open(path, "r") as f:
+    path0 = "./contents/SP-" + year + "-papers.txt"
+    path1 = "./contents/SP-" + year + "-papers&abstract.txt"
+    with open(path0, "r") as f:
         papers = f.read()
         papers = json.loads(papers)
+    print(year + "年共收录论文：" + str(len(papers)) + "篇")
+    abstracts = load_papers(path1)
     if keyword != None:
         papers = match_key_words(papers, keyword)
+        print("关键字命中" + str(len(papers)) + "篇")
     for paper in papers:
         print("论文题目：" + paper)
+        if abstracts:
+            print("论文摘要：" + abstracts[paper])
         print("---------------------------------------------------------------------------------------------------------------")
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-c', '--conference', help='会议名称', required=True)
-parser.add_argument('-y', '--year', help='年份', required=True)
-parser.add_argument('-k', '--keyword', help='关键字')
-parser.add_argument('-a', '--abstract', help='摘要')
-parser.add_argument('-l', '--link', help='链接')
+# 命令行式
+# parser = argparse.ArgumentParser()
+# parser.add_argument('-c', '--conference', help='会议名称', required=True)
+# parser.add_argument('-y', '--year', help='年份', required=True)
+# parser.add_argument('-k', '--keyword', help='关键字')
+# parser.add_argument('-a', '--abstract', help='摘要')
+# parser.add_argument('-l', '--link', help='链接')
 
-args = parser.parse_args()
-conference = args.conference
-year = args.year
-keyword = args.keyword
+# args = parser.parse_args()
+# conference = args.conference
+# year = args.year
+# keyword = args.keyword
 
-if conference == "CCS":
-    get_CCS(year, keyword)
+# if conference == "CCS":
+#     get_CCS(year, keyword)
 
-if conference == "USENIX":
-    get_USENIX(year, keyword)
+# if conference == "USENIX":
+#     get_USENIX(year, keyword)
 
-if conference == "SP":
-    get_SP(year, keyword)
+# if conference == "SP":
+#     get_SP(year, keyword)
 
-if conference == "NDSS":
-    get_NDSS(year, keyword)
+# if conference == "NDSS":
+#     get_NDSS(year, keyword)
+
+year = "2023"
+keyword = 'fuzz'
+print("CCS:")
+get_CCS(year, keyword)
+print("USENIX:")
+get_USENIX(year, keyword)
+print("SP:")
+get_SP(year, keyword)
+print("NDSS:")
+get_NDSS(year, keyword)

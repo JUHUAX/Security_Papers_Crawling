@@ -62,6 +62,8 @@ def get_papers(year):
         urls = eval(content)
     url = urls[year]
     paper_url = url + "/accepted-papers.html"
+    if year == "2022":
+        paper_url = "https://www.sigsac.org/ccs/CCS2022/program/accepted-papers.html"
     response = requests.get(paper_url, verify=False)
     html = response.text
     soup = BeautifulSoup(html, "html.parser")
@@ -80,13 +82,11 @@ def match_key_words(papers, key):
     return result
 
 #获取title的摘要
-#ACM的数据库会锁IP
 def get_abstract(title):
     print(title)
     params = {"fillQuickSearch":"false","target":"advanced","expand":"dl","field1":"AllField","text1":title}
     response = requests.get('https://dl.acm.org/action/doSearch', params=params,verify=False)
     html = response.text
-    print(html)
     soup = BeautifulSoup(html, "html.parser")
     paper_url = "https://dl.acm.org" + soup.find(name="span", attrs={"class" :"hlFld-Title"}).contents[0]['href']
     response = requests.get(paper_url,verify=False)

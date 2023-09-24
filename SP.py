@@ -27,8 +27,15 @@ def get_papers(year):
     for paper in papers:
         title = paper.contents[1].text.strip().lower()
         titles.append(title)
+    abstracts = soup.find_all(attrs={"class" :"panel-collapse collapse"})
+    abs = []
+    if abstracts != None:
+        for abstract in abstracts:
+            a = abstract.contents[1].contents[0].text.strip()
+            abs.append(a)
 
-    return titles
+    abstracts = dict(zip(titles, abs))
+    return [titles, abstracts]
 
 def match_key_words(papers, key):
     result = []
